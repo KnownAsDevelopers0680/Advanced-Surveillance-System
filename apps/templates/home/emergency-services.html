@@ -1,16 +1,138 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} Services {% endblock title %}
+{% block title %} Emergency Services {% endblock title %}
 
-<!-- Specific CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+    <!-- Inline CSS for Emergency Services page -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .service {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            background: linear-gradient(135deg, #e9f5ff 0%, #ffffff 100%);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .service:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .service h4 {
+            margin: 0;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .service p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .service {
+                padding: 10px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock stylesheets %}
 
 {% block content %}
+<div class="container">
+    <h2>Emergency Services</h2>
+    <p>If you are facing an emergency, please contact the following services:</p>
 
+    <div class="service">
+        <h4>Police</h4>
+        <p>Emergency Number: <strong>100</strong></p>
+        <p>For non-emergencies: <strong>(123) 456-7890</strong></p>
+        <a href="tel:100" class="btn">Call Police</a>
+    </div>
 
-{% include "includes/footer.html" %}
-    
+    <div class="service">
+        <h4>Fire Department</h4>
+        <p>Emergency Number: <strong>104</strong></p>
+        <p>For non-emergencies: <strong>(123) 555-6789</strong></p>
+        <a href="tel:104" class="btn">Call Fire Department</a>
+    </div>
+
+    <div class="service">
+        <h4>Ambulance Services</h4>
+        <p>Emergency Number: <strong>108</strong></p>
+        <p>For non-emergencies: <strong>(123) 111-2222</strong></p>
+        <a href="tel:108" class="btn">Call Ambulance</a>
+    </div>
+
+    <div class="service">
+        <h4>National Suicide Prevention Lifeline</h4>
+        <p>Emergency Number: <strong>1-800-273-8255</strong></p>
+        <a href="tel:18002738255" class="btn">Call Lifeline</a>
+    </div>
+</div>
 {% endblock content %}
 
-<!-- Specific JS goes HERE --> 
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+    <!-- Inline JavaScript if needed -->
+    <script>
+        // Optional JavaScript code can go here
+    </script>
+{% endblock javascripts %}
