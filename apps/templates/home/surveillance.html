@@ -1,16 +1,198 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/base.html' %} {% block title %} Surveillance System {%
+endblock title %} {% block stylesheets %}
+<style>
+   .text-dark-green {
+    color: #07a907; /* Dark green color */
+}
+</style>
+{% endblock stylesheets %} {% block content %}
+<div class="container">
+  <h5 class="text-center">Surveillance System</h5>
+  <p class="text-center font-weight-bold">
+    Instantly detect and respond to incidents such as equipment malfunctions,
+    split oil, or the absence of critical safety gear like helmets.
+  </p>
 
-{% block title %} Surveillance {% endblock title %}
+  <br>
 
-<!-- Specific CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+  <div class="container">
+    <div class="row">
+        <div class="col-xl-5 col-sm-12 mb-xl-0 mb-4">
+            <div class="card" style="width: 100%; border-left: 20px solid transparent; border-right: 20px solid transparent;">
+          <div class="card-body p-3">
+            <div class="row">
+              <div class="col-8">
+                <div class="numbers">
+                  <h5 class="font-weight-bolder mb-0">Camera Credentials:</h5>
+                  <br />
+                  <p>This is info, text to be added..This is info, text to be added..
+                    This is info, text to be added..
+                    This is info, text to be added..
+                    This is info, text to be added..
+                    This is info, text to be added..
+                    This is info, text to be added..
+                  </p>
+                  <p>Device IP: <span id="device-ip">192.168.1.1</span></p>
+                  <p>
+                    Connected with same wifi: <span id="wifi-status">Yes</span>
+                  </p>
+                </div>
+              </div>
+            <!-- Button to open the camera -->
+                <button id="openCamera" class="btn btn-primary">Connect Camera</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-{% block content %}
+      
+  
+      <div class="col-xl-7 col-sm-12 mb-xl-0 mb-4">
+        <div class="card" style="width: 100%; border-left: 20px solid transparent; border-right: 20px solid transparent;">
+          <div class="card-body p-3">
+            <div class="row">
+              <div class="col-12">
+                <div class="numbers">
+                  <h5 class="font-weight-bolder mb-0">Live Footage:</h5>
+                  <br />
+                  <p class="text-sm mb-0 font-weight-bold">
+                    Camera Name: 
+                    </p>
+                   <!-- Live Footage Section -->
+                    <div class="live-footage" id="liveFootage" style="display: none">
+                        <div class="video-container">
+                        <video id="video" width="610" height="480" autoplay></video>
+                        </div>
+                    </div>
+
+                    <p class="text-sm mb-0 font-weight-bold">
+                        Timestamp:
+                    </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
 
 
-{% include "includes/footer.html" %}
+  </div>
+</div>
+</div>
+
+
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-xl-5 col-sm-12 mb-xl-0 mb-4">
+            <div class="card" style="width: 100%; height: 100%; border-left: 20px solid transparent; border-right: 20px solid transparent;">
+          <div class="card-body p-3">
+            <div class="row">
+              <div class="col-8">
+                <div class="numbers">
+                  <h5 class="font-weight-bolder mb-0">Accident Detected:</h5>
+                  <br />
+                  <p class="text-danger">
+                    Alert: Helmet Not Worn! 
+                    </p>
+                    <p class="text-dark-green">
+                        Snapshot captured and stored successfully. 
+                    </p>
+                    <div class="footage-preview">
+                        <h6>Snapshot Preview:</h6>
+                        <img src="/static/images/snapshot1.jpg" alt="Snapshot 1" />
+                        <img src="/static/images/snapshot2.jpg" alt="Snapshot 2" />
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+
+    </div>
+  </div>
+
+  <br>
+
+
+  </div>
+</div>
+</div>
+  
     
-{% endblock content %}
 
-<!-- Specific JS goes HERE --> 
-{% block javascripts %}{% endblock javascripts %}
+     
+
+      
+    </div>
+
+    {% include "includes/footer.html" %} {% endblock content %} {% block
+    javascripts %}
+    <script>
+      // JavaScript to handle camera access
+      document
+        .getElementById("openCamera")
+        .addEventListener("click", async () => {
+          const video = document.getElementById("video");
+          const constraints = { video: true };
+
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia(
+              constraints
+            );
+            video.srcObject = stream;
+            document.getElementById("liveFootage").style.display = "flex";
+            detectHelmet(stream);
+          } catch (error) {
+            console.error("Error accessing camera:", error);
+          }
+        });
+
+      async function detectHelmet(stream) {
+        const video = document.getElementById("video");
+
+        setInterval(async () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = canvas.toDataURL("image/jpeg");
+
+          // Send the image to the Flask server for detection
+          const response = await fetch("/detect", {
+            method: "POST",
+            body: new FormData().append("image", imageData),
+            headers: {
+              Accept: "application/json",
+            },
+          });
+
+          const result = await response.json();
+
+          // Check for helmet detection in the results
+          if (!result.helmet_detected) {
+            alert("Alert: Helmet Not Worn!"); // Show alert if no helmet is detected
+            triggerAlarm();
+          }
+        }, 5000); // Check every 5 seconds
+      }
+
+      // Function to trigger alarm
+      function triggerAlarm() {
+        alert(
+          "Alert: Helmet Not Worn! Snapshot captured and stored successfully."
+        );
+      }
+    </script>
+    {% endblock javascripts %}
+  </div>
+</div>
