@@ -3,362 +3,192 @@
 {% block title %} Subscription Plans {% endblock title %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-<style>
-    /* Core Styles */
-    body {
-        background-color: rgb(244, 247, 250);
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        transition: background-color 0.5s ease;
-    }
-
-    /* Step Container */
-    .step-indicator {
-        display: flex;
-        justify-content: space-around;
-        margin: 40px auto;
-    }
-
-    .step {
-        width: 30%;
-        padding: 15px;
-        text-align: center;
-        background-color: #eaeaea;
-        border-radius: 10px;
-        position: relative;
-        color: #333;
-        font-weight: bold;
-    }
-
-    .step.completed {
-        background-color: hsl(120, 61%, 50%);
-        color: white;
-    }
-
-    .step.active {
-        background-color: #007bff;
-        color: white;
-    }
-
-    /* Container Styles */
-    .container {
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        margin-top: 50px;
-        color: white;
-        display: none;
-    }
-
-    .plan-container {
-        background: linear-gradient(to right, rgba(255, 189, 72, 0.8), rgba(251, 82, 101, 0.8));
-    }
-
-    .payment-container {
-        background: linear-gradient(to right, rgba(48, 78, 236, 0.8), rgba(123, 31, 162, 0.8));
-    }
-
-    .form-container {
-        background: linear-gradient(to right, rgba(0, 205, 255, 0.8), rgba(0, 150, 136, 0.8));
-        padding: 30px;
-    }
-
-    h2 {
-        color: #ffffff;
-    }
-
-    .plan-option {
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        cursor: pointer;
-        text-align: center;
-        transition: transform 0.3s ease, background-color 0.3s ease;
-        background: rgba(255, 255, 255, 0.1); /* Faded white background */
-    }
-
-    .plan-option:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .selected {
-        border-color: #ffffff;
-        background-color: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Button Styles */
-    .btn-success {
-        background-color: hsl(120, 61%, 50%);
-        border: none;
-        transition: background-color 0.3s, transform 0.3s;
-        display: none;
-        margin-top: 20px;
-    }
-
-    .btn-success:hover {
-        background-color: hsl(120, 71%, 60%);
-        transform: scale(1.05);
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
-        margin-top: 20px;
-        transition: background-color 0.3s, transform 0.3s;
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-        transform: scale(1.05);
-    }
-
-    /* Tooltip Error Styles */
-    .tooltip-error {
-        display: none;
-        color: red;
-        font-size: 12px;
-    }
-
-    .invalid {
-        border-color: red;
-    }
-
-    .invalid + .tooltip-error {
-        display: block;
-    }
-
-    /* Payment Popup */
-    #payment-popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 30px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        text-align: center;
-        z-index: 9999;
-        transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-
-    #payment-popup.active {
-        display: block;
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-
-    .popup-btn {
-        background-color: hsl(120, 61%, 50%);
-        padding: 10px 20px;
-        border: none;
-        color: #fff;
-        cursor: pointer;
-        margin-top: 20px;
-    }
-
-    .popup-btn:hover {
-        background-color: hsl(120, 71%, 60%);
-    }
-
-    /* Popup Animation */
-    #payment-popup {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.8);
-    }
-
-    /* Media Queries for Responsive Design */
-    @media (max-width: 768px) {
-        .step {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .plan-option {
-            font-size: 14px;
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
         }
 
         .container {
-            padding: 10px;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(75, 0, 130, 0.1) 0%, rgba(75, 0, 130, 0.7) 100%);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
         }
-    }
-</style>
+
+        h2 {
+            text-align: center;
+            color: #6a0dad; /* Dark purple color */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .subscription-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .subscription-box {
+            flex: 1;
+            margin: 0 10px;
+            padding: 20px;
+            height: 350px; /* Increased height for the boxes */
+            border: 1px solid rgba(106, 13, 173, 0.7); /* Faded purple border */
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(106, 13, 173, 0.4), rgba(0, 204, 255, 0.4)); /* Light purple to cyan */
+            position: relative; /* To create an overlay effect */
+            overflow: hidden; /* To hide overflow from animation */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-width: 220px; /* Minimum width for small screens */
+        }
+
+        .subscription-box:hover {
+            transform: translateY(-15px) rotate(1deg); /* Lift effect on hover */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); /* Enhanced shadow on hover */
+        }
+
+        .subscription-box::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 0; /* Behind the content */
+            transition: transform 0.3s ease; /* Smooth transition */
+        }
+
+        .subscription-box:hover::after {
+            transform: translate(-50%, -50%) scale(1.1); /* Slight scale on hover */
+        }
+
+        .subscription-box h4 {
+            margin: 0;
+            color: #6a0dad; /* Dark purple text */
+            font-weight: bold;
+            position: relative;
+            z-index: 1; /* On top of the background */
+        }
+
+        .subscription-box ul {
+            list-style: none; /* Remove default list style */
+            padding-left: 0; /* Remove left padding */
+            margin: 10px 0; /* Margin for spacing */
+            position: relative;
+            z-index: 1; /* On top of the background */
+        }
+
+        .subscription-box li {
+            margin: 5px 0; /* Margin for spacing */
+            color: #555;
+            position: relative;
+            z-index: 1; /* On top of the background */
+            padding-left: 20px; /* Padding for spacing */
+        }
+
+        .subscription-box li::before {
+            content: '\f00c'; /* Font Awesome check icon */
+            font-family: 'Font Awesome 5 Free'; /* Use Font Awesome */
+            font-weight: 900; /* Solid style */
+            position: absolute;
+            left: 0; /* Positioning */
+            color: #6a0dad; /* Icon color */
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #6a0dad; /* Dark purple background */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+            position: relative;
+            z-index: 1; /* On top of the background */
+        }
+
+        .btn:hover {
+            background-color: #570d9c; /* Darker purple on hover */
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .subscription-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .subscription-box {
+                margin: 10px 0; /* Margin adjustment for mobile */
+            }
+        }
+    </style>
 {% endblock stylesheets %}
 
 {% block content %}
-<div class="step-indicator">
-    <div id="step1" class="step active">Step 1: Select Plan</div>
-    <div id="step2" class="step">Step 2: Payment Method</div>
-    <div id="step3" class="step">Step 3: Payment Info</div>
-</div>
-
-<div class="container plan-container" id="plan-container" style="display: block;">
-    <h2>Select Your Subscription Plan</h2>
-
-    <div id="plans">
-        <div class="plan-option" data-plan="basic">
+<div class="container">
+    <h2>Subscription Plans</h2>
+    <div class="subscription-container">
+        <div class="subscription-box">
             <h4>Basic Plan</h4>
-            <p>$9.99/month</p>
-            <p>Access to basic features</p>
+            <p>Price: <strong>$9.99/month</strong></p>
+            <ul>
+                <li>Access to basic services</li>
+                <li>Email support</li>
+            </ul>
+            <a href="https://buy.stripe.com/test_4gw7t1ddQ1427Wo6or" class="btn">Select Plan</a>
         </div>
-        <div class="plan-option" data-plan="premium">
+
+        <div class="subscription-box">
             <h4>Premium Plan</h4>
-            <p>$19.99/month</p>
-            <p>Access to all premium features</p>
+            <p>Price: <strong>$19.99/month</strong></p>
+            <ul>
+                <li>All features included</li>
+                <li>Priority support</li>
+            </ul>
+            <a href="https://buy.stripe.com/test_4gw14Dgq2eUSa4w7st" class="btn">Select Plan</a>
         </div>
-        <div class="plan-option" data-plan="pro">
+
+        <div class="subscription-box">
             <h4>Pro Plan</h4>
-            <p>$29.99/month</p>
-            <p>Access to all features and priority support</p>
-        </div>
-    </div>
-
-    <button id="payment-button" class="btn btn-success">Proceed to Payment</button>
-</div>
-
-<div class="container payment-container" id="payment-container">
-    <h2>Select Payment Method</h2>
-    <div id="payment-methods">
-        <div class="plan-option payment-method" data-method="credit-card">
-            <i class="fas fa-credit-card"></i> Credit Card
-        </div>
-        <div class="plan-option payment-method" data-method="paypal">
-            <i class="fab fa-paypal"></i> PayPal
-        </div>
-        <div class="plan-option payment-method" data-method="apple-pay">
-            <i class="fab fa-apple-pay"></i> Apple Pay
+            <p>Price: <strong>$29.99/month</strong></p>
+            <ul>
+                <li>Unlimited access</li>
+                <li>24/7 support</li>
+            </ul>
+            <a href="https://buy.stripe.com/test_dR64gP4Hk8wu5Og6oo" class="btn">Select Plan</a>
         </div>
     </div>
 </div>
-
-<div class="container form-container" id="payment-form-container">
-    <h2>Payment Information</h2>
-    <form id="payment-form">
-        <div class="form-group">
-            <label for="card-name">Name on Card</label>
-            <input type="text" id="card-name" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" class="form-control" required>
-            <span class="tooltip-error" id="email-error">Enter valid email</span>
-        </div>
-
-        <div class="form-group">
-            <label for="card-number">Card Number</label>
-            <input type="text" id="card-number" class="form-control" placeholder="1234 5678 9012 3456" required>
-            <span class="tooltip-error" id="card-error">Enter valid card number</span>
-        </div>
-
-        <div class="form-group">
-            <label for="expiry-date">Expiry Date</label>
-            <input type="text" id="expiry-date" class="form-control" placeholder="MM/YY" required>
-            <span class="tooltip-error" id="expiry-error">Enter valid expiry date</span>
-        </div>
-
-        <div class="form-group">
-            <label for="cvc">CVC</label>
-            <input type="text" id="cvc" class="form-control" placeholder="123" required>
-            <span class="tooltip-error" id="cvc-error">Enter valid CVC</span>
-        </div>
-        <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
-    </form>
-    <div id="payment-status" class="mt-3"></div>
-</div>
-
-<!-- Popup for Payment Success -->
-<div id="payment-popup">
-    <div class="message">Payment Successful! Thank you for your subscription.</div>
-    <button class="popup-btn" onclick="closePopup()">Close</button>
-</div>
-
-{% include "includes/footer.html" %}
-
 {% endblock content %}
 
 {% block javascripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const planOptions = document.querySelectorAll('.plan-option');
-        const paymentButton = document.getElementById('payment-button');
-        const paymentContainer = document.getElementById('payment-container');
-        const planContainer = document.getElementById('plan-container');
-        const formContainer = document.getElementById('payment-form-container');
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        const paymentPopup = document.getElementById('payment-popup');
-        let selectedPlan = '';
-        let selectedMethod = '';
-
-        // Step transitions
-        function goToStep2() {
-            step1.classList.remove('active');
-            step2.classList.add('active');
-            planContainer.style.display = 'none';
-            paymentContainer.style.display = 'block';
-        }
-
-        function goToStep3() {
-            step2.classList.remove('active');
-            step3.classList.add('active');
-            paymentContainer.style.display = 'none';
-            formContainer.style.display = 'block';
-        }
-
-        planOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                if (this.classList.contains('payment-method')) {
-                    selectedMethod = this.dataset.method;
-                    goToStep3();
-                } else {
-                    planOptions.forEach(plan => plan.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedPlan = this.dataset.plan;
-                    paymentButton.style.display = 'block';
-                }
-            });
-        });
-
-        paymentButton.addEventListener('click', function() {
-            goToStep2();
-        });
-
-        const paymentForm = document.getElementById('payment-form');
-        const paymentStatus = document.getElementById('payment-status');
-        
-        paymentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const cardName = document.getElementById('card-name').value;
-            const cardNumber = document.getElementById('card-number').value;
-            const expiryDate = document.getElementById('expiry-date').value;
-            const cvc = document.getElementById('cvc').value;
-
-            // Here you would normally process the payment
-
-            paymentStatus.textContent = "Processing payment...";
-            setTimeout(() => {
-                paymentPopup.classList.add('active');
-                paymentStatus.textContent = ""; // Clear payment status on success
-
-                // Automatically close the popup after 3 seconds
-                setTimeout(closePopup, 3000); // 3000 milliseconds = 3 seconds
-            }, 2000); // Simulate delay
-        });
-
-        function closePopup() {
-            paymentPopup.classList.remove('active');
-        }
-    });
-</script>
-
+    <script>
+        // Optional JavaScript code can go here
+    </script>
 {% endblock javascripts %}
+
+
+
+
+
+
+
+
+
+
+
