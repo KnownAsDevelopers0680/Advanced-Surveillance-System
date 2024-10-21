@@ -3,6 +3,14 @@
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %} {% block content %}
 
+
+<style>
+  .fade-in {
+      opacity: 0; 
+      transition: opacity 2s ease-in; 
+  }
+</style>
+
 <div class="container-fluid py-4">
   <div class="row">
     <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -129,6 +137,31 @@
   </div>
 
   <br />
+
+
+  <!-- Video Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="video-container" style="position: relative; overflow: hidden;">
+        <video autoplay loop muted style="width: 1200px; height: 290px; object-fit:fill; opacity: 0; transition: opacity 2s ease-in;" onloadeddata="this.style.opacity='1';">
+          <source src="../../static/assets/video/SurveilX-Security2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </div>
+
+<br>
+
+
+<div class="container">
+  <h3 class="text-center fade-in" style="color: black;">"In every place, we secure your space."</h3>
+</div>
+
+
+
+
+<br><br>
 
   <div class="container">
     <div class="row">
@@ -340,6 +373,11 @@
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
 
+<script>
+  window.onload = function() {
+      document.querySelector('.fade-in').style.opacity = 1;
+  };
+</script>
 <script src="{{ config.ASSETS_ROOT }}/js/plugins/chartjs.min.js"></script>
 <script>
   var ctx = document.getElementById("chart-bars").getContext("2d");
