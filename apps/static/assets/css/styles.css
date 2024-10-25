@@ -104,6 +104,8 @@ pre
 .alert-box p strong {
     display: block;
     margin-bottom: 10px;
+    line-height: 0%;
+
     
 }
 
