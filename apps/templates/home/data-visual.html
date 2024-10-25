@@ -86,7 +86,7 @@
 {% block content %}
 
 <div class="header">
-    <h2 id="chartTitle">January Accident Line Chart</h2>
+    <h2 id="chartTitle">January Incident Line Chart</h2>
     <select id="monthSelector">
         <option value="1">January</option>
         <option value="2">February</option>
@@ -110,17 +110,17 @@
     </div>
     
     <div class="stats">
-        <h3>Accident Statistics</h3>
+        <h3>Incident Statistics</h3>
         <div class="stat minStat">
-            <strong>Minimum Accidents:</strong> <span id="minAccidentsValue">0</span><br>
-            <strong>When Minimum Accident Occurred:</strong> <span id="minAccidentsDates">Jan 1</span>
+            <strong>Minimum Incidents:</strong> <span id="minAccidentsValue">0</span><br>
+            <strong>When Minimum Incident Occurred:</strong> <span id="minAccidentsDates">Jan 1</span>
         </div>
         <div class="stat maxStat">
-            <strong>Maximum Accidents:</strong> <span id="maxAccidentsValue">0</span><br>
-            <strong>When Maximum Accident Occurred:</strong> <span id="maxAccidentsDates">Jan 1</span>
+            <strong>Maximum Incidents:</strong> <span id="maxAccidentsValue">0</span><br>
+            <strong>When Maximum Incident Occurred:</strong> <span id="maxAccidentsDates">Jan 1</span>
         </div>
         <div class="stat">
-            <strong>Average Accidents per Day:</strong> <span id="avgAccidents">0</span>
+            <strong>Average Incidents per Day:</strong> <span id="avgAccidents">0</span>
         </div>
     </div>
 </div>
@@ -177,7 +177,7 @@
             document.getElementById('avgAccidents').innerText = avgAccidents;
 
             // Update chart title
-            document.getElementById('chartTitle').innerText = `${monthNames[selectedMonth - 1]} Accident Line Chart`;
+            document.getElementById('chartTitle').innerText = `${monthNames[selectedMonth - 1]} Incident Line Chart`;
 
             if (myLineChart) {
                 myLineChart.destroy(); // Destroy previous chart instance
