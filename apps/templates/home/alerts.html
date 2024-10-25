@@ -6,7 +6,83 @@
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI-Driven Alerts</title>
+        <link rel="stylesheet" href="../../static/assets/css/styles.css">
+    </head>
+<main>
+    <header>
+        <h1>AI-Driven Alerts</h1>
+        <p style = "text-align: center"><b>You will receive real-time alerts via SMS and email to take immediate action during emergencies.</b></p>
+    </header>
 
+    <section class="alerts">
+        <div class="alert-history">
+            <h2 style = "text-align: center">SMS Alert History:</h2>
+            <div class="alert-box">
+                
+                <p style = "text-align: center"><strong >Mon, 23 Sep 2024, 3:06 pm</strong></p>
+                <p>Alert!</p>
+                <br/>
+                <p>   Helmet not worn! </p>
+                <br/>
+                <p>   Snapshot captured and stored successfully.</p>
+                <br/>
+    
+            </div>
+
+<br/>
+<br/>
+            <div class="alert-box">
+                
+                <p style = "text-align: center"><strong >Thu, 26 Sep 2024, 4:47 pm</strong></p>
+                <p>Alert!</p>
+                <br/>
+                <p>   Oil spill threaten! </p>
+                <br/>
+                <p>   Snapshot captured and stored successfully.</p>
+                <br/>
+    
+            </div>
+        </div>
+
+        <div class="alert-history">
+            <h2 style = "text-align: center">Email Alert History:</h2>
+            <div class="alert-box">
+                <p style = "text-align: center"><strong>Mon, 23 Sep 2024, 3:06 pm</strong></p>
+                <p>⚠️  Alert message generated!</p>
+                <br/>
+                <p>
+                <pre>      Helmet not worn! </pre>
+                <br/>
+                <pre>      Snapshot captured and stored successfully.</pre> </p>
+                <br/>
+                     <a href="https://www.industrybuying.com/articles/importance-of-wearing-safety-helmets-at-work/" style = color:navy>LEARN MORE</a></p>
+            </div>
+<br/>
+            <div class="alert-box">
+                <p style = "text-align: center"><strong>Thu, 26 Sep 2024, 4:47 pm</strong></p>
+                <p>⚠️  Alert message generated!</p>
+                <br/>
+                <p>
+                <pre>      Oil spill threaten! </pre>
+                <br/>
+                <pre>      Snapshot captured and stored successfully.</pre> </p>
+                <br/>
+                     <a href="https://ongcindia.com/web/eng/oil-spill-management" style = color:navy>LEARN MORE</a>
+                    </p>
+            </div>
+        </div>
+    </section>
+</main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
 
 {% include "includes/footer.html" %}
     
