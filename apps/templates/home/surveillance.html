@@ -116,8 +116,6 @@ endblock title %} {% block stylesheets %}
         </div>
       </div>
 
-      
-
     </div>
   </div>
 
@@ -127,13 +125,26 @@ endblock title %} {% block stylesheets %}
   </div>
 </div>
 </div>
-  
-    
-
      
 
+     
       
     </div>
+
+      <br><br>
+          
+
+
+      
+          <h5>Send SMS</h5>
+          <form action="/send_sms" method="POST">
+              <button type="submit">Send SMS</button>
+          </form>
+                    
+
+      
+
+   
 
     {% include "includes/footer.html" %} {% endblock content %} {% block
     javascripts %}
