@@ -15,7 +15,7 @@
             max-width: 1200px;
             margin: 50px auto;
             padding: 20px;
-            background: linear-gradient(135deg, rgba(75, 0, 130, 0.1) 0%, rgba(75, 0, 130, 0.7) 100%);
+            background: linear-gradient(135deg, rgba(203, 12, 159, 0.1) 0%, rgba(203, 12, 159, 0.7) 100%);
             border-radius: 10px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
@@ -23,7 +23,7 @@
 
         h2 {
             text-align: center;
-            color: #6a0dad; /* Dark purple color */
+            color: #cb0c9f; /* Main color */
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 20px;
@@ -40,9 +40,9 @@
             margin: 0 10px;
             padding: 20px;
             height: 350px; /* Increased height for the boxes */
-            border: 1px solid rgba(106, 13, 173, 0.7); /* Faded purple border */
+            border: 1px solid rgba(203, 12, 159, 0.7); /* Faded border */
             border-radius: 10px;
-            background: linear-gradient(135deg, rgba(106, 13, 173, 0.4), rgba(0, 204, 255, 0.4)); /* Light purple to cyan */
+            background: linear-gradient(135deg, rgba(203, 12, 159, 0.4), rgba(0, 204, 255, 0.4)); /* Main color to cyan */
             position: relative; /* To create an overlay effect */
             overflow: hidden; /* To hide overflow from animation */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -74,7 +74,7 @@
 
         .subscription-box h4 {
             margin: 0;
-            color: #6a0dad; /* Dark purple text */
+            color: #cb0c9f; /* Main text color */
             font-weight: bold;
             position: relative;
             z-index: 1; /* On top of the background */
@@ -102,16 +102,16 @@
             font-weight: 900; /* Solid style */
             position: absolute;
             left: 0; /* Positioning */
-            color: #6a0dad; /* Icon color */
+            color: #cb0c9f; /* Icon color */
         }
 
-        .btn {
+        .button {
             display: inline-block;
-            background-color: #6a0dad; /* Dark purple background */
+            background-color: #cb0c9f; /* Button background */
             color: white;
             padding: 10px 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
             text-decoration: none;
@@ -119,10 +119,11 @@
             margin-top: 10px;
             position: relative;
             z-index: 1; /* On top of the background */
+            font-weight:bold;
         }
 
-        .btn:hover {
-            background-color: #570d9c; /* Darker purple on hover */
+        .button:hover {
+            background-color: #a30b7e; /* Darker shade on hover */
             transform: scale(1.05);
         }
 
@@ -150,7 +151,7 @@
                 <li>Access to basic services</li>
                 <li>Email support</li>
             </ul>
-            <a href="https://buy.stripe.com/test_4gw7t1ddQ1427Wo6or" class="btn">Select Plan</a>
+            <a href="https://buy.stripe.com/test_4gw7t1ddQ1427Wo6or" class="button">SELECT PLAN</a>
         </div>
 
         <div class="subscription-box">
@@ -160,7 +161,7 @@
                 <li>All features included</li>
                 <li>Priority support</li>
             </ul>
-            <a href="https://buy.stripe.com/test_4gw14Dgq2eUSa4w7st" class="btn">Select Plan</a>
+            <a href="https://buy.stripe.com/test_4gw14Dgq2eUSa4w7st" class="button">SELECT PLAN</a>
         </div>
 
         <div class="subscription-box">
@@ -170,7 +171,7 @@
                 <li>Unlimited access</li>
                 <li>24/7 support</li>
             </ul>
-            <a href="https://buy.stripe.com/test_dR64gP4Hk8wu5Og6oo" class="btn">Select Plan</a>
+            <a href="https://buy.stripe.com/test_dR64gP4Hk8wu5Og6oo" class="button">SELECT PLAN</a>
         </div>
     </div>
 </div>
@@ -180,6 +181,6 @@
     <script>
         // Optional JavaScript code can go here
     </script>
-
 {% endblock javascripts %}
+
 

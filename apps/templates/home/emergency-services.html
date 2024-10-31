@@ -29,7 +29,7 @@
 
         h2 {
             text-align: center;
-            color: #007bff;
+            color: #cb0c9f;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 20px;
@@ -38,7 +38,7 @@
         .service {
             margin: 20px 0;
             padding: 15px;
-            border: 1px solid #007bff;
+            border: 1px solid #cb0c9f;
             border-radius: 5px;
             background: linear-gradient(135deg, #e9f5ff 0%, #ffffff 100%);
             position: relative;
@@ -53,7 +53,7 @@
 
         .service h4 {
             margin: 0;
-            color: #007bff;
+            color: #cb0c9f;
             font-weight: bold;
         }
 
@@ -62,21 +62,22 @@
             color: #555;
         }
 
-        .btn {
+        .buttons {
             display: inline-block;
-            background-color: #007bff;
+            background-color: #cb0c9f;
             color: white;
             padding: 10px 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
             text-decoration: none;
             transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight:bold;
         }
 
-        .btn:hover {
-            background-color: #0056b3;
+        .buttons:hover {
+            background-color: #a30b7e;
             transform: scale(1.05);
         }
 
@@ -89,7 +90,7 @@
                 padding: 10px;
             }
 
-            .btn {
+            .buttons {
                 width: 100%;
             }
         }
@@ -99,33 +100,33 @@
 {% block content %}
 <div class="container">
     <h2>Emergency Services</h2>
-    <p>If you are facing an emergency, please contact the following services:</p>
+    <p>*If you are facing an emergency, please contact the following services:</p>
 
     <div class="service">
         <h4>Police</h4>
         <p>Emergency Number: <strong>100</strong></p>
         <p>For non-emergencies: <strong>(123) 456-7890</strong></p>
-        <a href="tel:100" class="btn">Call Police</a>
+        <a href="tel:100" class="buttons">CALL POLICE</a>
     </div>
 
     <div class="service">
         <h4>Fire Department</h4>
         <p>Emergency Number: <strong>104</strong></p>
         <p>For non-emergencies: <strong>(123) 555-6789</strong></p>
-        <a href="tel:104" class="btn">Call Fire Department</a>
+        <a href="tel:104" class="buttons">CALL FIRE DEPARTMENT</a>
     </div>
 
     <div class="service">
         <h4>Ambulance Services</h4>
         <p>Emergency Number: <strong>108</strong></p>
         <p>For non-emergencies: <strong>(123) 111-2222</strong></p>
-        <a href="tel:108" class="btn">Call Ambulance</a>
+        <a href="tel:108" class="buttons">CALL</a>
     </div>
 
     <div class="service">
         <h4>National Suicide Prevention Lifeline</h4>
         <p>Emergency Number: <strong>1-800-273-8255</strong></p>
-        <a href="tel:18002738255" class="btn">Call Lifeline</a>
+        <a href="tel:18002738255" class="buttons">CALL LIFELINE</a>
     </div>
 </div>
 {% endblock content %}
@@ -136,3 +137,9 @@
         // Optional JavaScript code can go here
     </script>
 {% endblock javascripts %}
+
+
+
+
+
+
