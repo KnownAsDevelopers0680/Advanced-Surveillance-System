@@ -3,14 +3,105 @@
 {% block title %} Recordings {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+    .tree {
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+        white-space: pre;
+    }
+    .folder {
+        font-weight: bold;
+        margin-left: 20px;
+        cursor: pointer;
+    }
+    .file {
+        margin-left: 40px;
+        cursor: pointer;
+    }
+    .collapsed {
+        display: none;
+    }
+
+    /* Button container styles */
+    .buttons-container {
+        margin-bottom: 20px; /* Space between buttons and first folder */
+    }
+
+    .button {
+        margin-right: 10px;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .button:disabled {
+        background-color: #d3d3d3;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock stylesheets %}
 
 {% block content %}
+<h2>Video Recordings</h2>
 
+<!-- Static File Tree Structure with Dynamic Toggle -->
+<div class="tree" id="folderTree">
+    {% for year in range(2018, 2025) %}
+    <div class="folder" onclick="navigateFolder('year{{ year }}')">📁 {{ year }}</div>
+    <div id="year{{ year }}" class="collapsed">
+        {% for month, days in [
+            ('January', 31), 
+            ('February', (29 if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0) else 28)), 
+            ('March', 31), 
+            ('April', 30), 
+            ('May', 31), 
+            ('June', 30), 
+            ('July', 31), 
+            ('August', 31), 
+            ('September', 30), 
+            ('October', 31), 
+            ('November', 30), 
+            ('December', 31)
+        ] %}
+        <div class="folder" onclick="navigateFolder('{{ month|lower }}{{ year }}')">📁 {{ month }}</div>
+        <div id="{{ month|lower }}{{ year }}" class="collapsed">
+            {% for day in range(1, days + 1) %}
+            <div class="folder" onclick="navigateFolder('{{ month|lower }}{{ day }}{{ year }}')">📁 {{ month[:3] }} {{ day }}</div>
+            <div id="{{ month|lower }}{{ day }}{{ year }}" class="collapsed">
+                <div class="file">📄 video_01.mp4</div>
+                <div class="file">📄 video_02.mp4</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
 
 {% include "includes/footer.html" %}
-    
 {% endblock content %}
 
-<!-- Specific JS goes HERE --> 
-{% block javascripts %}{% endblock javascripts %}
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+<script>
+    // Function to navigate to a folder and toggle its state (collapsed or expanded)
+    function navigateFolder(folderId) {
+        var folder = document.getElementById(folderId);
+
+        // Toggle the clicked folder (expand if collapsed or collapse if expanded)
+        if (folder.classList.contains('collapsed')) {
+            folder.classList.remove('collapsed');
+        } else {
+            folder.classList.add('collapsed');
+        }
+    }
+</script>
+{% endblock javascripts %}
