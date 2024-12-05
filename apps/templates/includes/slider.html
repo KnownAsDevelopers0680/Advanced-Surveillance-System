@@ -1,0 +1,205 @@
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f4f4f4;
+  color: #333;
+}
+
+.title {
+  text-align: center;
+  font-size: 2rem;
+  color: #8d15ae;
+  margin: 20px 0;
+}
+
+.slider {
+  position: relative;
+  margin: 50px auto;
+  width: 100%;
+  height: 550px;
+  overflow: hidden;
+}
+
+.item {
+  position: absolute;
+  width: 350px;
+  height: 500px;
+  text-align: justify;
+  background: #9715ae;
+  border-radius: 12px;
+  padding: 20px;
+  transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth transition for opacity and transform */
+  left: calc(50% - 150px);
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: white;
+  opacity: 0;
+  transform: scale(0.9) translateX(100%);
+}
+
+.item.active {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  z-index: 1;
+}
+
+.item.inactive {
+  opacity: 0.3; /* Less visible when not active */
+  transform: scale(0.9); /* Slightly smaller */
+}
+
+
+
+.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 3px solid #d0e7b0;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.1);
+  filter: brightness(2);
+}
+
+.stars {
+  color: #ffd700;
+  font-size: 1.5rem;
+}
+
+.nav-button {
+  position: absolute;
+  top: 50%;
+  font-size: 2rem;
+  color: #15ae49;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+}
+
+#prev {
+  left: 20px;
+}
+
+#next {
+  right: 20px;
+}
+
+</style>
+
+<body>
+    <div>
+      <h2 class="title"> What Our Users Say </h2>
+      <div class="slider">
+        <div class="item">
+          <img src="" alt="User Avatar" class="avatar">
+          <div class="stars">★★★★★</div>
+          <p>The SurveilX platform has completely made our company secure and well maintained.</p>
+          <h2 class="name">- User's Name</h2>
+          <div class="job-title">Data Analyst</div>
+          <div class="location">Location: Bengaluru, India</div>
+        </div>
+        <div class="item">
+          <img src="" alt="User Avatar" class="avatar">
+          <div class="stars">★★★★★</div>
+          <p>The SurveilX platform has completely made our company secure and well maintained.</p>
+          <h2 class="name">- User's Name</h2>
+          <div class="job-title">Data Analyst</div>
+          <div class="location">Location: Bengaluru, India</div>
+        </div>
+        <!-- Repeat for other testimonials -->
+        <div class="item">
+            <img src="" alt="User Avatar" class="avatar">
+            <div class="stars">★★★★★</div>
+            <p>The SurveilX platform has completely made our company secure and well maintained.</p>
+            <h2 class="name">- User's Name</h2>
+            <div class="job-title">Data Analyst</div>
+            <div class="location">Location: Bengaluru, India</div>
+          </div>
+          <div class="item">
+            <img src="" alt="User Avatar" class="avatar">
+            <div class="stars">★★★★★</div>
+            <p>The SurveilX platform has completely made our company secure and well maintained.</p>
+            <h2 class="name">- User's Name</h2>
+            <div class="job-title">Data Analyst</div>
+            <div class="location">Location: Bengaluru, India</div>
+          </div>
+          <div class="item">
+            <img src="" alt="User Avatar" class="avatar">
+            <div class="stars">★★★★★</div>
+            <p>The SurveilX platform has completely made our company secure and well maintained.</p>
+            <h2 class="name">- User's Name</h2>
+            <div class="job-title">Data Analyst</div>
+            <div class="location">Location: Bengaluru, India</div>
+          </div>
+          <div class="item">
+            <img src="" alt="User Avatar" class="avatar">
+            <div class="stars">★★★★★</div>
+            <p>The SurveilX platform has completely made our company secure and well maintained.</p>
+            <h2 class="name">- User's Name</h2>
+            <div class="job-title">Data Analyst</div>
+            <div class="location">Location: Bengaluru, India</div>
+          </div>
+      </div>
+      
+       
+      </div>
+      <button id="prev" class="nav-button"></button>
+      <button id="next" class="nav-button"></button>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+<script>
+    const items = document.querySelectorAll('.item');
+let activeIndex = 0;
+
+function loadShow() {
+  items.forEach((item, index) => {
+    item.classList.remove('active');
+    item.classList.remove('inactive');
+    
+    if (index === activeIndex) {
+      item.classList.add('active'); // Full visibility for active slide
+    } else {
+      item.classList.add('inactive'); // Reduced opacity for inactive slides
+    }
+
+    // Apply transform and opacity depending on the index difference
+    if (index > activeIndex) {
+      item.style.transform = `translateX(${120 * (index - activeIndex)}px) scale(${1 - 0.2 * (index - activeIndex)})`;
+    } else {
+      item.style.transform = `translateX(${-120 * (activeIndex - index)}px) scale(${1 - 0.2 * (activeIndex - index)})`;
+    }
+  });
+}
+
+function nextSlide() {
+  activeIndex = (activeIndex + 1) % items.length;
+  loadShow();
+}
+
+function prevSlide() {
+  activeIndex = (activeIndex - 1 + items.length) % items.length;
+  loadShow();
+}
+
+document.getElementById('next').addEventListener('click', nextSlide);
+document.getElementById('prev').addEventListener('click', prevSlide);
+
+// Auto-slide
+setInterval(nextSlide, 2500);
+
+// Initialize the slider
+loadShow();
+
+
+</script>
