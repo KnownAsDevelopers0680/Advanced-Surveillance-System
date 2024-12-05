@@ -9,6 +9,35 @@
       opacity: 0; 
       transition: opacity 2s ease-in; 
   }
+  .how-it-works {
+  /* background: #eaffea; Light green background */
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.how-it-works h2 {
+  color: #330029; /* Dark pink text */
+}
+
+.step-card {
+  background: #ffeafa;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.step-card:hover {
+  transform: scale(1.05); /* Zooms in the card */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Adds a shadow effect on hover */
+}
+
+.step-card h5 {
+  color: #79015b; /* Medium pink text */
+}
+
+.step-card p {
+  color: #a9058e; /* Darker pink text */
+}
+
 </style>
 
 <div class="container-fluid py-4">
@@ -158,7 +187,7 @@
 
 
 <div>
-  <h3 class="text-center fade-in" style="color: black;">"In every place, we secure your space."</h3>
+  <h3 class="text-center" style="color: black;">"In every place, we secure your space."</h3>
 </div>
 
 
@@ -331,7 +360,33 @@
     </div>
   </div>
 
-  <br>
+
+
+  <div class="how-it-works my-5 ">
+    <h2 class="text-center">How It Works?</h2>
+    <div class="row text-center mt-4">
+      <div class="col-md-4">
+        <div class="step-card p-4 shadow">
+          <h5 class="fw-bold">Step 1: Data Collection</h5>
+          <p>We gather real-time data of live footage using cutting-edge sensors, CCTV camera and AI.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="step-card p-4 shadow">
+          <h5 class="fw-bold">Step 2: Analysis</h5>
+          <p>Our AI models analyze the data to provide actionable insights on incidents at work site.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="step-card p-4 shadow">
+          <h5 class="fw-bold">Step 3: Optimization</h5>
+          <p>Based on the analysis, we generate an alert as well as Email and SMS notification to the admin.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
 
   <div class="col-xl-6 col-sm-12 mb-xl-0 mb-4"></div>
     <div class="card" style="max-width: 100%;">
