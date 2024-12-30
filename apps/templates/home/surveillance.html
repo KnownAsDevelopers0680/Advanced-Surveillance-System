@@ -16,6 +16,21 @@ endblock title %} {% block stylesheets %}
 
   <br>
 
+  <!-- Video Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="video-container" style="position: relative; overflow: hidden;">
+        <video autoplay loop muted style="width: 1200px; height: 290px; object-fit:fill; opacity: 0; transition: opacity 2s ease-in;" onloadeddata="this.style.opacity='1';">
+          <source src="../../static/assets/video/SurveilX-Security2.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </div>
+
+
+  <br/>
+
   <div class="container">
     <div class="row">
         <div class="col-xl-5 col-sm-12 mb-xl-0 mb-4">
@@ -40,7 +55,7 @@ endblock title %} {% block stylesheets %}
                 </div>
               </div>
             <!-- Button to open the camera -->
-                <button id="openCamera" class="btn btn-primary">Connect Camera</button>
+                <!-- <button id="openCamera" class="btn btn-primary">Connect Camera</button> -->
             </div>
           </div>
         </div>
@@ -59,12 +74,20 @@ endblock title %} {% block stylesheets %}
                   <p class="text-sm mb-0 font-weight-bold">
                     Camera Name: 
                     </p>
+                    <div class="container">
+                      <!-- <h1 class="text-center">Real-Time Helmet Detection</h1> -->
+                      <div class="video-container">
+                          <!-- Stream the video -->
+                          <img src="/video_feed" alt="Live Footage">
+                      </div>
+                      <button onclick="startDetection()" class="btn btn-success">Start Detection</button>
+                  </div>
                    <!-- Live Footage Section -->
-                    <div class="live-footage" id="liveFootage" style="display: none">
+                    <!-- <div class="live-footage" id="liveFootage" style="display: none">
                         <div class="video-container">
-                        <video id="video" width="610" height="290" autoplay></video>
+                        <video src="/video_feed" id="video" width="610" height="290" autoplay></video>
                         </div>
-                    </div>
+                    </div> -->
 
                     <p class="text-sm mb-0 font-weight-bold">
                         Timestamp:
@@ -136,10 +159,10 @@ endblock title %} {% block stylesheets %}
 
 
       
-          <h5>Send SMS</h5>
+          <!-- <h5>Send SMS</h5>
           <form action="/send_sms" method="POST">
               <button type="submit">Send SMS</button>
-          </form>
+          </form> -->
                     
 
       
@@ -148,7 +171,7 @@ endblock title %} {% block stylesheets %}
 
     {% include "includes/footer.html" %} {% endblock content %} {% block
     javascripts %}
-    <script>
+    <!-- <script>
       // JavaScript to handle camera access
       document
         .getElementById("openCamera")
@@ -204,7 +227,30 @@ endblock title %} {% block stylesheets %}
           "Alert: Helmet Not Worn! Snapshot captured and stored successfully."
         );
       }
-    </script>
+    </script> -->
+
+    <script>
+      async function startCamera() {
+      const video = document.querySelector("video"); // Select the video element
+      const constraints = { video: true }; // Video stream constraints
+
+      try {
+          const stream = await navigator.mediaDevices.getUserMedia(constraints); // Access the camera
+          video.srcObject = stream; // Stream the video to the video element
+          video.style.opacity = "1"; // Make the video visible
+          alert("Camera started successfully!"); // Notify the user
+      } catch (error) {
+          console.error("Error accessing the camera:", error);
+          alert("Failed to start the camera. Please check your device permissions.");
+      }
+  }
+
+      function startDetection() {
+          alert("Detection started! Ensure the camera is connected.");
+          // Optionally trigger further actions if needed
+          startCamera();
+      }
+  </script>
     {% endblock javascripts %}
   </div>
 </div>
