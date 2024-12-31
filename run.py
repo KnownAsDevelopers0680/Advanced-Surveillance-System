@@ -44,8 +44,8 @@ for command in [gen_api, ]:
     app.cli.add_command(command)
 
 # Twilio configuration
-account_sid = 'AC498468e7877b48e9640cc7953cc2f66c'  # Replace with your actual SID
-auth_token = 'e0f5d97d9d7780d20059d18e145641a1'    # Replace with your actual Auth Token
+account_sid = ''  # Replace with your actual SID
+auth_token = ''    # Replace with your actual Auth Token
 twilio_phone_number = '+14692146189'
 recipient_phone_number = '+918261983331'
 
