@@ -1,26 +1,20 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 import os
-from   flask_migrate import Migrate
-from   flask_minify  import Minify
-from   sys import exit
-from twilio.rest import Client
-from flask import Flask, render_template, request, redirect, url_for, Response
-import cv2
+import time
 import math
+import cv2
 import cvzone
+from flask import Flask, render_template, request, redirect, url_for, Response
+from flask_migrate import Migrate
+from flask_minify import Minify
+from sys import exit
+from twilio.rest import Client
 from ultralytics import YOLO
-
 from api_generator.commands import gen_api
-
 from apps.config import config_dict
 from apps import create_app, db
 
-# # Initialize Flask app
-# app = Flask(__name__)
+# Initialize Flask app
+app = Flask(__name__)
 
 # WARNING: Don't run with debug turned on in production!
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
@@ -28,12 +22,9 @@ DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 # The configuration
 get_config_mode = 'Debug' if DEBUG else 'Production'
 
-
 try:
-
     # Load the configuration using the default values
     app_config = config_dict[get_config_mode.capitalize()]
-
 except KeyError:
     exit('Error: Invalid <config_mode>. Expected values [Debug, Production] ')
 
@@ -42,17 +33,17 @@ Migrate(app, db)
 
 if not DEBUG:
     Minify(app=app, html=True, js=False, cssless=False)
-    
+
 if DEBUG:
-    app.logger.info('DEBUG            = ' + str(DEBUG)             )
-    app.logger.info('Page Compression = ' + 'FALSE' if DEBUG else 'TRUE' )
+    app.logger.info('DEBUG            = ' + str(DEBUG))
+    app.logger.info('Page Compression = ' + 'FALSE' if DEBUG else 'TRUE')
     app.logger.info('DBMS             = ' + app_config.SQLALCHEMY_DATABASE_URI)
-    app.logger.info('ASSETS_ROOT      = ' + app_config.ASSETS_ROOT )
+    app.logger.info('ASSETS_ROOT      = ' + app_config.ASSETS_ROOT)
 
 for command in [gen_api, ]:
     app.cli.add_command(command)
 
-# Your Twilio account SID and Auth Token
+# Twilio configuration
 account_sid = ''  # Replace with your actual SID
 auth_token = ''    # Replace with your actual Auth Token
 twilio_phone_number = '+14692146189'
@@ -67,17 +58,6 @@ def send_sms(alert_message):
         to=recipient_phone_number
     )
     print(f"SMS sent: {message.sid}")
-    
-# Route to handle SMS sending
-# @app.route('/send_sms', methods=['POST'])
-# def send_sms():
-#     # Send the SMS
-#     message = client.messages.create(
-#         body='Hello! This is a Helmet Detection Alert From SurveilX.',
-#         from_='+14692146189',  # Replace with your Twilio number
-#         to='+918261983331'      # Replace with your phone number
-#     )
-#     return f"Message sent! SID: {message.sid}"
 
 # Initialize YOLO model with custom weights
 model = YOLO("best.pt")
@@ -85,9 +65,10 @@ model = YOLO("best.pt")
 # Define class names
 classNames = ['Body', 'Helmet', 'No helmet', 'Other']
 
-# Video stream generator
+# Video stream generator with 30-second interval check for "Other" class
 def generate_frames():
     cap = cv2.VideoCapture(0)  # Use webcam (0)
+    last_alert_time = time.time()  # Track the time of the last alert
 
     while True:
         success, img = cap.read()
@@ -107,11 +88,14 @@ def generate_frames():
                 cls = int(box.cls[0])
 
                 cvzone.putTextRect(img, f'{classNames[cls]} {conf}', (max(0, x1), max(35, y1)), scale=1, thickness=1)
-                
-                # If the detected class is "Other", send SMS
+
+                # If the detected class is "Other", check the time interval
                 if classNames[cls] == 'Other':
-                    alert_message = "Hello! This is a Helmet Detection Alert From SurveilX."
-                    send_sms(alert_message)
+                    current_time = time.time()
+                    if current_time - last_alert_time >= 30:  # Check if 30 seconds have passed
+                        alert_message = "Hello! This is a Helmet Detection Alert From SurveilX."
+                        send_sms(alert_message)
+                        last_alert_time = current_time  # Update the last alert time
 
         # Encode the processed frame
         ret, buffer = cv2.imencode('.jpg', img)
@@ -126,10 +110,6 @@ def index():
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-    
+
 if __name__ == "__main__":
     app.run()
-    
-    
-    
-    
