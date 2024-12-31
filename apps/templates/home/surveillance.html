@@ -130,8 +130,12 @@
                       </p>
                       <div class="footage-preview">
                           <h6>Snapshot Preview:</h6>
-                          <img src="/static/images/snapshot1.jpg" alt="Snapshot 1" />
-                          <img src="/static/images/snapshot2.jpg" alt="Snapshot 2" />
+                          <div id="alert-container" style="color: green; font-weight: bold;"></div>
+                          <!-- <img src="/static/images/snapshot1.jpg" alt="Snapshot 1" />
+                          <img src="/static/images/snapshot2.jpg" alt="Snapshot 2" /> -->
+                          <div id="snapshot-container">
+                            <!-- Latest snapshots will be displayed here -->
+                        </div>
                       </div>
                   </div>
                 </div>
@@ -261,6 +265,45 @@
   
     // Update the timestamp every second
     setInterval(updateTimestamp, 1000);
+
+    
+    // const snapshotContainer = document.getElementById('snapshot-container');
+
+    // // Function to fetch and display latest screenshots
+    // function fetchLatestSnapshots() {
+    //     fetch('/get_latest_screenshots')
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             // Clear current snapshots
+    //             snapshotContainer.innerHTML = '';
+
+    //             // Check if there are errors
+    //             if (data.error) {
+    //                 snapshotContainer.textContent = "Error fetching snapshots.";
+    //                 console.error(data.error);
+    //                 return;
+    //             }
+
+    //             // Display each image
+    //             data.forEach((imagePath) => {
+    //                 const img = document.createElement('img');
+    //                 img.src = imagePath;
+    //                 img.alt = "Snapshot";
+    //                 img.style = "margin: 5px; max-width: 150px; border: 2px solid #4CAF50;";
+    //                 snapshotContainer.appendChild(img);
+    //             });
+    //         })
+    //         .catch(err => {
+    //             console.error("Failed to fetch snapshots:", err);
+    //         });
+    // }
+
+    // // Fetch snapshots on page load
+    // fetchLatestSnapshots();
+
+    // // Update snapshots periodically (every 30 seconds)
+    // setInterval(fetchLatestSnapshots, 30000);
+
     </script>
       {% endblock javascripts %}
     </div>

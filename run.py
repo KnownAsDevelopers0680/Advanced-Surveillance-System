@@ -3,7 +3,7 @@ import time
 import math
 import cv2
 import cvzone
-from flask import Flask, render_template, request, redirect, url_for, Response
+from flask import Flask, render_template, request, redirect, url_for, Response, jsonify
 from flask_migrate import Migrate
 from flask_minify import Minify
 from sys import exit
@@ -44,8 +44,8 @@ for command in [gen_api, ]:
     app.cli.add_command(command)
 
 # Twilio configuration
-account_sid = ''  # Replace with your actual SID
-auth_token = ''    # Replace with your actual Auth Token
+account_sid = 'AC498468e7877b48e9640cc7953cc2f66c'  # Replace with your actual SID
+auth_token = 'e0f5d97d9d7780d20059d18e145641a1'    # Replace with your actual Auth Token
 twilio_phone_number = '+14692146189'
 recipient_phone_number = '+918261983331'
 
@@ -69,6 +69,11 @@ classNames = ['Body', 'Helmet', 'No helmet', 'Other']
 def generate_frames():
     cap = cv2.VideoCapture(0)  # Use webcam (0)
     last_alert_time = time.time()  # Track the time of the last alert
+    screenshot_dir = os.path.join("static", "screenshots")  # Directory to save screenshots inside static
+
+    # Create the directory if it doesn't exist
+    if not os.path.exists(screenshot_dir):
+        os.makedirs(screenshot_dir)
 
     while True:
         success, img = cap.read()
@@ -94,7 +99,16 @@ def generate_frames():
                     current_time = time.time()
                     if current_time - last_alert_time >= 30:  # Check if 30 seconds have passed
                         alert_message = "Hello! This is a Helmet Detection Alert From SurveilX."
+                        
+                        #Send SMS
                         send_sms(alert_message)
+                        
+                        # Save the screenshot
+                        timestamp = time.strftime("%Y%m%d-%H%M%S")
+                        screenshot_path = os.path.join(screenshot_dir, f"screenshot_{timestamp}.jpg")
+                        cv2.imwrite(screenshot_path, img)
+                        print(f"Screenshot saved at: {screenshot_path}")
+
                         last_alert_time = current_time  # Update the last alert time
 
         # Encode the processed frame
@@ -110,6 +124,25 @@ def index():
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# @app.route('/get_latest_screenshots', methods=['GET'])
+# def get_latest_screenshots():
+#     screenshot_dir = os.path.join('static', 'screenshots')
+#     try:
+#         # Get all image files sorted by creation time (newest first)
+#         files = sorted(
+#             [f for f in os.listdir(screenshot_dir) if f.endswith(('.jpg', '.jpeg', '.png'))],
+#             key=lambda x: os.path.getctime(os.path.join(screenshot_dir, x)),
+#             reverse=True
+#         )
+#         # Include only the latest 5 screenshots
+#         latest_files = files[:1]
+#         # Construct URLs relative to the static directory
+#         file_paths = [f"/static/screenshots/{file}" for file in latest_files]
+#         return jsonify(file_paths)
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run()
