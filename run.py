@@ -16,11 +16,11 @@ from apps import create_app, db
 app = Flask(__name__)
 
 # Load environment variables securely
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER', '+14692146189')
-RECIPIENT_PHONE_NUMBER = os.getenv('RECIPIENT_PHONE_NUMBER', '+918261983331')
+DEBUG = (os.getenv('DEBUG', 'False') == 'True')
+# TWILIO_ACCOUNT_SID = os.getenv('AC498468e7877b48e9640cc7953cc2f66c')
+# TWILIO_AUTH_TOKEN = os.getenv('e0f5d97d9d7780d20059d18e145641a1')
+# TWILIO_PHONE_NUMBER = os.getenv('+14692146189')
+# RECIPIENT_PHONE_NUMBER = os.getenv('+918261983331')
 
 # Configuration
 get_config_mode = 'Debug' if DEBUG else 'Production'
@@ -35,10 +35,22 @@ Migrate(app, db)
 
 if not DEBUG:
     Minify(app=app, html=True, js=False, cssless=False)
+    
+if DEBUG:
+    app.logger.info('DEBUG            = ' + str(DEBUG))
+    app.logger.info('Page Compression = ' + 'FALSE' if DEBUG else 'TRUE')
+    app.logger.info('DBMS             = ' + app_config.SQLALCHEMY_DATABASE_URI)
+    app.logger.info('ASSETS_ROOT      = ' + app_config.ASSETS_ROOT)
 
 # CLI command registration
 for command in [gen_api]:
     app.cli.add_command(command)
+
+# Twilio configuration
+account_sid = 'AC498468e7877b48e9640cc7953cc2f66c'  # Replace with your actual SID
+auth_token = 'e0f5d97d9d7780d20059d18e145641a1'    # Replace with your actual Auth Token
+twilio_phone_number = '+14692146189'
+recipient_phone_number = '+918261983331'
 
 # YOLO model initialization
 model = YOLO("best.pt")
@@ -47,13 +59,13 @@ classNames = ['Body', 'Helmet', 'No helmet', 'Other']
 # Twilio SMS function with error handling
 def send_sms(alert_message):
     try:
-        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        client = Client(account_sid, auth_token)
         message = client.messages.create(
             body=alert_message,
-            from_=TWILIO_PHONE_NUMBER,
-            to=RECIPIENT_PHONE_NUMBER
+            from_=twilio_phone_number,
+            to=recipient_phone_number
         )
-        app.logger.info(f"SMS sent successfully: {message.sid}")
+        print(f"SMS sent: {message.sid}")
     except Exception as e:
         app.logger.error(f"Failed to send SMS: {e}")
 
@@ -93,7 +105,7 @@ def generate_frames():
                     if classNames[cls] == 'Other':
                         current_time = time.time()
                         if current_time - last_alert_time >= 30:
-                            alert_message = "Helmet Detection Alert: 'Other' class detected!"
+                            alert_message = "Helmet Detection Alert: This is a Helmet Detection Alert From SurveilX."
                             send_sms(alert_message)
 
                             # Save screenshot
