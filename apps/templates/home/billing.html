@@ -50,7 +50,7 @@
         }
 
         .subscription-box:hover {
-            transform: translateY(-15px) rotate(1deg); /* Lift effect on hover */
+            transform: translateY(-15px) scale(1.05); /* Upward movement and slight scaling */
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); /* Enhanced shadow on hover */
         }
 
@@ -123,8 +123,8 @@
         }
 
         .button:hover {
-            background-color: #a30b7e; /* Darker shade on hover */
-            transform: scale(1.05);
+            color:white;
+            transform: translateY(-5px); /* Upward hover effect for the button */
         }
 
         @media (max-width: 768px) {
@@ -139,6 +139,7 @@
         }
     </style>
 {% endblock stylesheets %}
+
 
 {% block content %}
 <div class="container">
