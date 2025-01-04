@@ -14,6 +14,11 @@ from apps import create_app, db
 from datetime import datetime
 import sqlite3
 import logging
+import geocoder
+import requests
+import sqlite3
+from datetime import datetime
+import logging
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -40,9 +45,13 @@ auth_token = ''   # Replace with your Auth Token or load from environment variab
 twilio_phone_number = ''
 recipient_phone_number = ''
 
+# OpenCage API Key
+geolocation_api_key = ''  # Replace with your actual OpenCage API key
+
+
 # YOLO model initialization
 model = YOLO("best.pt")
-classNames = ['Body', 'Helmet', 'No helmet', 'Other']
+classNames = ['wearing', 'not_wearing', 'helmet', 'no-helmet', 'phone']
 
 # Database setup
 def init_db():
@@ -70,9 +79,42 @@ def init_db():
 # Call the database initialization
 init_db() 
 
-# Function to insert incident into the database
-def insert_incident(snapshot, gender, geolocation, video):
+# Function to get geolocation based on IP (for demonstration)
+def get_geolocation():
     try:
+        g = geocoder.ip('me')  # Gets the geolocation of the current IP
+        return g.latlng  # Returns [latitude, longitude]
+    except Exception as e:
+        logging.error(f"Error fetching geolocation: {e}")
+        return None
+    
+# Function to get address using OpenCage Data API
+def get_address_from_latlng(lat, lng):
+    try:
+        url = f"https://api.opencagedata.com/geocode/v1/json?q={lat}+{lng}&key={geolocation_api_key}"
+        response = requests.get(url)
+        result = response.json()
+        if result and result['results']:
+            # Extract the formatted address from the results
+            address = result['results'][0]['formatted']
+            return address
+        else:
+            return "Address not found"
+    except Exception as e:
+        logging.error(f"Error fetching address from OpenCage API: {e}")
+        return "Geolocation error"
+
+# Function to insert incident and geolocation into the database
+def insert_incident(snapshot, gender, video, alert):
+    try:
+        # Fetch geolocation using OpenCage API
+        lat_lng = get_geolocation()  # Replace with actual GPS data if available
+        if lat_lng:
+            latitude, longitude = lat_lng
+            location = get_address_from_latlng(latitude, longitude)
+        else:
+            location = "Unknown"
+            
         connection = sqlite3.connect("incidents.db")
         cursor = connection.cursor()
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -86,12 +128,13 @@ def insert_incident(snapshot, gender, geolocation, video):
             video_data = video_file.read()
 
         insert_query = """
-        INSERT INTO incidents (snapshot, gender, geolocation, timestamp, date, video)
-        VALUES (?, ?, ?, ?, ?, ?);
+        INSERT INTO incidents (snapshot, gender, geolocation, timestamp, date, video, alert)
+        VALUES (?, ?, ?, ?, ?, ?,?);
         """
-        cursor.execute(insert_query, (snapshot_data, gender, geolocation, timestamp, date, video_data))
+        cursor.execute(insert_query, (snapshot_data, gender, location, timestamp, date, video_data, alert))
         connection.commit()
         connection.close()
+        logging.info(f"Incident recorded with geolocation: {location}.")
         app.logger.info("Incident recorded in the database successfully.")
     except Exception as e:
         app.logger.error(f"Failed to insert incident into database: {e}")
@@ -148,7 +191,8 @@ def generate_frames():
                         scale=1, thickness=1
                     )
 
-                    if classNames[cls] == 'Other':
+                    if classNames[cls] == 'not_wearing':
+                        alert = 'Glasses not worn'
                         current_time = time.time()
                         if current_time - last_alert_time >= 30:
                             timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -175,14 +219,86 @@ def generate_frames():
                             app.logger.info(f"Video saved: {video_path}")
 
                             # Save to database
-                            insert_incident(snapshot_path, "Unknown", "Unknown", video_path)
+                            insert_incident(snapshot_path, "Unknown", video_path, alert)
 
                             # Send SMS alert
-                            alert_message = "Helmet Detection Alert: 'Other' class detected!"
+                            alert_message = f"Glasses Alert: A person without Glasses detected. 'Not wearing' class detected!"
                             send_sms(alert_message)
 
                             last_alert_time = current_time
+                    
+                    elif classNames[cls] == 'no-helmet':
+                        alert = 'Helmet Not Worn'
+                        current_time = time.time()
+                        if current_time - last_alert_time >= 30:
+                            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+                            snapshot_path = os.path.join(screenshot_dir, f"screenshot_{timestamp}.jpg")
+                            
+                            # Save snapshot
+                            cv2.imwrite(snapshot_path, img)
+                            app.logger.info(f"Snapshot saved: {snapshot_path}")
 
+                            # Record 5-second video
+                            video_path = os.path.join(video_dir, f"video_{timestamp}.mp4")
+                            video_writer = cv2.VideoWriter(
+                                video_path, cv2.VideoWriter_fourcc(*'mp4v'),
+                                20, (img.shape[1], img.shape[0])
+                            )
+                            start_time = time.time()
+                            while time.time() - start_time < 5:
+                                success, frame = cap.read()
+                                if success:
+                                    video_writer.write(frame)
+                                else:
+                                    break
+                            video_writer.release()
+                            app.logger.info(f"Video saved: {video_path}")
+
+                            # Save to database
+                            insert_incident(snapshot_path, "Unknown", video_path, alert)
+
+                            # Send SMS alert
+                            alert_message = "Helmet Alert: A person without Helmet detected. 'No-helmet' class detected!"
+                            send_sms(alert_message)
+
+                            last_alert_time = current_time
+                            
+                    elif classNames[cls] == 'phone':
+                        alert = 'Phone detected'
+                        current_time = time.time()
+                        if current_time - last_alert_time >= 30:
+                            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+                            snapshot_path = os.path.join(screenshot_dir, f"screenshot_{timestamp}.jpg")
+                            
+                            # Save snapshot
+                            cv2.imwrite(snapshot_path, img)
+                            app.logger.info(f"Snapshot saved: {snapshot_path}")
+
+                            # Record 5-second video
+                            video_path = os.path.join(video_dir, f"video_{timestamp}.mp4")
+                            video_writer = cv2.VideoWriter(
+                                video_path, cv2.VideoWriter_fourcc(*'mp4v'),
+                                20, (img.shape[1], img.shape[0])
+                            )
+                            start_time = time.time()
+                            while time.time() - start_time < 5:
+                                success, frame = cap.read()
+                                if success:
+                                    video_writer.write(frame)
+                                else:
+                                    break
+                            video_writer.release()
+                            app.logger.info(f"Video saved: {video_path}")
+
+                            # Save to database
+                            insert_incident(snapshot_path, "Unknown", video_path, alert)
+
+                            # Send SMS alert
+                            alert_message = "Phone Alert: A person with Phone detected. 'Phone' class detected!"
+                            send_sms(alert_message)
+
+                            last_alert_time = current_time
+                                
             ret, buffer = cv2.imencode('.jpg', img)
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
