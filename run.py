@@ -3,7 +3,7 @@ import time
 import math
 import cv2
 import cvzone
-from flask import Flask, render_template, Response, jsonify
+from flask import Flask, render_template, Response, jsonify,url_for,send_from_directory
 from flask_migrate import Migrate
 from flask_minify import Minify
 from twilio.rest import Client
@@ -322,3 +322,51 @@ if __name__ == "__main__":
     logging.basicConfig(filename='app.log', level=logging.INFO)
 
     app.run(debug=DEBUG)
+
+
+
+
+
+def get_files_from_static_subfolders(base_folder="static"):
+    """
+    Retrieve files from 'screenshots' and 'videos' subfolders with their metadata.
+
+    Args:
+        base_folder (str): Path to the static folder containing subfolders.
+
+    Returns:
+        list: A list of dictionaries containing file metadata.
+    """
+    subfolders = {
+        "screenshots": "img",  # Files in 'screenshots' are images
+        "videos": "vid"        # Files in 'videos' are videos
+    }
+    files = []
+
+    for subfolder, file_type in subfolders.items():
+        folder_path = os.path.join(base_folder, subfolder)
+        if not os.path.exists(folder_path):
+            continue  # Skip if the subfolder doesn't exist
+
+        for filename in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, filename)
+            if os.path.isfile(file_path):  # Ensure it's a file, not a directory
+                file_info = {
+                    "name": filename,
+                    "type": file_type,
+                    "last_modified": datetime.fromtimestamp(os.path.getmtime(file_path)).strftime('%b %d, %Y'),
+                    "size": f"{os.path.getsize(file_path) / 1024:.2f} KB",  # File size in KB
+                    "download_url": url_for("download_file", folder=subfolder, filename=filename),
+                }
+                files.append(file_info)
+    return files
+
+@app.route("/")
+def video_storage():
+    files = get_files_from_static_subfolders("static")  # Specify the base folder
+    return render_template("video-record.html", files=files)
+
+@app.route("/download/<folder>/<filename>")
+def download_file(folder, filename):
+    folder_path = os.path.join("static", folder)
+    return send_from_directory(folder_path, filename, as_attachment=True)
