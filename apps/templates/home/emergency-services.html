@@ -1,69 +1,5 @@
-{% extends 'layouts/base.html' %}
 
-{% block title %} Emergency Services {% endblock title %}
 
-{% block stylesheets %}
-    <!-- Inline CSS for Emergency Services page -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f4f8;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .container:hover {
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        h2 {
-            text-align: center;
-            color: #cb0c9f;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-        }
-
-        .service {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #cb0c9f;
-            border-radius: 5px;
-            background: linear-gradient(135deg, #e9f5ff 0%, #ffffff 100%);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .service:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .service h4 {
-            margin: 0;
-            color: #cb0c9f;
-            font-weight: bold;
-        }
-
-        .service p {
-            margin: 5px 0;
-            color: #555;
-        }
-
-        .buttons {
-            display: inline-block;
             background-color: #cb0c9f;
             color: white;
             padding: 10px 15px;
@@ -117,21 +53,6 @@
         <a href="tel:104" class="buttons">CALL FIRE DEPARTMENT</a>
     </div>
 
-    <div class="service">
-        <h4>Ambulance Services</h4>
-        <p>Emergency Number: <strong>108</strong></p>
-        <p>For non-emergencies: <strong>(123) 111-2222</strong></p>
-        <a href="tel:108" class="buttons">CALL</a>
-    </div>
-
-    <div class="service">
-        <h4>National Suicide Prevention Lifeline</h4>
-        <p>Emergency Number: <strong>1-800-273-8255</strong></p>
-        <a href="tel:18002738255" class="buttons">CALL LIFELINE</a>
-    </div>
-</div>
-
-{% include "includes/footer.html" %}
 
 {% endblock content %}
 

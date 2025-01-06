@@ -34,16 +34,9 @@
   td {
     color: #c3c3c3;
   }
-  .action-buttons button {
-    padding: 8px 12px;
-    margin-right: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .action-buttons .download-btn {
-    background-color: #4caf50;
-    color: #ffffff;
+  video {
+    max-width: 300px;
+    max-height: 200px;
   }
 </style>
 {% endblock stylesheets %}
@@ -54,35 +47,24 @@
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>File Type</th>
-        <th>Last Modified</th>
-        <th>File Size</th>
-        <th>Actions</th>
+        <th>Video</th>
+        <th>Gender</th>
       </tr>
     </thead>
     <tbody>
-      {% for file in files %}
-      <tr>
-        <td>{{ file.name }}</td>
-        <td>{{ file.type }}</td>
-        <td>{{ file.last_modified }}</td>
-        <td>{{ file.size }}</td>
-        <td class="action-buttons">
-          <a href="{{ file.download_url }}" download>
-            <button class="download-btn">Download</button>
-          </a>
-        </td>
-      </tr>
+      {% for video in videos %}
+        <tr>
+          <td>
+            <video controls>
+              <!-- <source src="{{ video.video_url }}" type="video/mp4"> -->
+              Your browser does not support the video tag.
+            </video>
+          </td>
+          <td>{{ video.gender }}</td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
 {% include "includes/footer.html" %}
 {% endblock content %}
-
-{% block javascripts %}
-<script>
-  // Any client-side scripts if required
-</script>
-{% endblock javascripts %}
