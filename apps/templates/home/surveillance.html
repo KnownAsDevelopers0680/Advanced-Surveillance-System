@@ -1,4 +1,34 @@
-
+{% extends 'layouts/base.html' %} {% block title %} Surveillance System {%
+  endblock title %} {% block stylesheets %}
+  <style>
+     .text-dark-green {
+      color: #07a907; /* Dark green color */
+  }
+  </style>
+  {% endblock stylesheets %} {% block content %}
+  <div class="container">
+    <h5 class="text-center">Surveillance System</h5>
+    <p class="text-center font-weight-bold">
+      Instantly detect and respond to incidents such as equipment malfunctions,
+      split oil, or the absence of critical safety gear like helmets.
+    </p>
+  </div>
+  
+    <br>
+  
+    <!-- Video Section -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="video-container" style="position: relative; overflow: hidden;">
+          <video autoplay loop muted style="width: 1200px; height: 290px; object-fit:fill; opacity: 0; transition: opacity 2s ease-in;" onloadeddata="this.style.opacity='1';">
+            <source src="../../static/assets/video/SurveilX-Security2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  
+  
     <br/>
   
     <div class="container">
@@ -31,7 +61,8 @@
             </div>
           </div>
         </div>
-
+  
+        
     
         <div class="col-xl-7 col-sm-12 mb-xl-0 mb-4">
           <div class="card" style="width: 100%; border-left: 20px solid transparent; border-right: 20px solid transparent;">

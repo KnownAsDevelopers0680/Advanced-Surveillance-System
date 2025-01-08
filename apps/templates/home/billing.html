@@ -1,3 +1,58 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Subscription Plans {% endblock title %}
+
+{% block stylesheets %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(203, 12, 159, 0.1) 0%, rgba(203, 12, 159, 0.7) 100%);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        h2 {
+            text-align: center;
+            color: #cb0c9f; /* Main color */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .subscription-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .subscription-box {
+            flex: 1;
+            margin: 0 10px;
+            padding: 20px;
+            height: 350px; /* Increased height for the boxes */
+            border: 1px solid rgba(203, 12, 159, 0.7); /* Faded border */
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(203, 12, 159, 0.4), rgba(0, 204, 255, 0.4)); /* Main color to cyan */
+            position: relative; /* To create an overlay effect */
+            overflow: hidden; /* To hide overflow from animation */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-width: 220px; /* Minimum width for small screens */
+        }
+
+        .subscription-box:hover {
+            transform: translateY(-15px) rotate(1deg); /* Lift effect on hover */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); /* Enhanced shadow on hover */
+        }
 
         .subscription-box::after {
             content: '';
@@ -68,8 +123,8 @@
         }
 
         .button:hover {
-            color:white;
-            transform: translateY(-5px); /* Upward hover effect for the button */
+            background-color: #a30b7e; /* Darker shade on hover */
+            transform: scale(1.05);
         }
 
         @media (max-width: 768px) {
@@ -85,9 +140,42 @@
     </style>
 {% endblock stylesheets %}
 
-
 {% block content %}
 <div class="container">
+    <h2>Subscription Plans</h2>
+    <div class="subscription-container">
+        <div class="subscription-box">
+            <h4>Basic Plan</h4>
+            <p>Price: <strong>$9.99/month</strong></p>
+            <ul>
+                <li>Access to basic services</li>
+                <li>Email support</li>
+            </ul>
+            <a href="https://buy.stripe.com/test_4gw7t1ddQ1427Wo6or" class="button">SELECT PLAN</a>
+        </div>
+
+        <div class="subscription-box">
+            <h4>Premium Plan</h4>
+            <p>Price: <strong>$19.99/month</strong></p>
+            <ul>
+                <li>All features included</li>
+                <li>Priority support</li>
+            </ul>
+            <a href="https://buy.stripe.com/test_4gw14Dgq2eUSa4w7st" class="button">SELECT PLAN</a>
+        </div>
+
+        <div class="subscription-box">
+            <h4>Pro Plan</h4>
+            <p>Price: <strong>$29.99/month</strong></p>
+            <ul>
+                <li>Unlimited access</li>
+                <li>24/7 support</li>
+            </ul>
+            <a href="https://buy.stripe.com/test_dR64gP4Hk8wu5Og6oo" class="button">SELECT PLAN</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
 
 {% block javascripts %}
     <script>

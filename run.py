@@ -14,14 +14,8 @@ from apps import create_app, db
 from datetime import datetime
 import sqlite3
 import logging
-import geocoder
-import requests
-import sqlite3
-from datetime import datetime
-import logging
 
 # Initialize Flask app
-app = Flask(__name__)
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
@@ -33,14 +27,21 @@ try:
 except KeyError:
     raise RuntimeError("Invalid <config_mode>. Expected values [Debug, Production]")
 
+app = create_app(app_config)
+Migrate(app, db)
 
-# OpenCage API Key
-geolocation_api_key = ''  # Replace with your actual OpenCage API key
+if not DEBUG:
+    Minify(app=app, html=True, js=False, cssless=False)
 
+# Twilio Configuration
+account_sid = ''  # Replace with your SID or load from environment variables
+auth_token = ''   # Replace with your Auth Token or load from environment variables
+twilio_phone_number = ''
+recipient_phone_number = ''
 
 # YOLO model initialization
 model = YOLO("best.pt")
-classNames = ['wearing', 'not_wearing', 'helmet', 'no-helmet', 'phone']
+classNames = ['wearing', 'not wearing', 'helmet','no helmet','phone']
 
 # Database setup
 def init_db():
@@ -68,26 +69,9 @@ def init_db():
 # Call the database initialization
 init_db() 
 
-# Function to get geolocation based on IP (for demonstration)
-def get_geolocation():
+# Function to insert incident into the database
+def insert_incident(snapshot, gender, geolocation, video):
     try:
-        g = geocoder.ip('me')  # Gets the geolocation of the current IP
-        return g.latlng  # Returns [latitude, longitude]
-    except Exception as e:
-        logging.error(f"Error fetching geolocation: {e}")
-        return None
-  
-# Function to insert incident and geolocation into the database
-def insert_incident(snapshot, gender, video, alert):
-    try:
-        # Fetch geolocation using OpenCage API
-        lat_lng = get_geolocation()  # Replace with actual GPS data if available
-        if lat_lng:
-            latitude, longitude = lat_lng
-            location = get_address_from_latlng(latitude, longitude)
-        else:
-            location = "Unknown"
-            
         connection = sqlite3.connect("incidents.db")
         cursor = connection.cursor()
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -101,13 +85,12 @@ def insert_incident(snapshot, gender, video, alert):
             video_data = video_file.read()
 
         insert_query = """
-        INSERT INTO incidents (snapshot, gender, geolocation, timestamp, date, video, alert)
-        VALUES (?, ?, ?, ?, ?, ?,?);
+        INSERT INTO incidents (snapshot, gender, geolocation, timestamp, date, video)
+        VALUES (?, ?, ?, ?, ?, ?);
         """
-        cursor.execute(insert_query, (snapshot_data, gender, location, timestamp, date, video_data, alert))
+        cursor.execute(insert_query, (snapshot_data, gender, geolocation, timestamp, date, video_data))
         connection.commit()
         connection.close()
-        logging.info(f"Incident recorded with geolocation: {location}.")
         app.logger.info("Incident recorded in the database successfully.")
     except Exception as e:
         app.logger.error(f"Failed to insert incident into database: {e}")
@@ -164,8 +147,7 @@ def generate_frames():
                         scale=1, thickness=1
                     )
 
-                    if classNames[cls] == 'not_wearing':
-                        alert = 'Glasses not worn'
+                    if classNames[cls] == 'Other':
                         current_time = time.time()
                         if current_time - last_alert_time >= 30:
                             timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -192,86 +174,14 @@ def generate_frames():
                             app.logger.info(f"Video saved: {video_path}")
 
                             # Save to database
-                            insert_incident(snapshot_path, "Unknown", video_path, alert)
+                            insert_incident(snapshot_path, "Unknown", "Unknown", video_path)
 
                             # Send SMS alert
-                            alert_message = f"Glasses Alert: A person without Glasses detected. 'Not wearing' class detected!"
+                            alert_message = "Helmet Detection Alert: 'Other' class detected!"
                             send_sms(alert_message)
 
                             last_alert_time = current_time
-                    
-                    elif classNames[cls] == 'no-helmet':
-                        alert = 'Helmet Not Worn'
-                        current_time = time.time()
-                        if current_time - last_alert_time >= 30:
-                            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-                            snapshot_path = os.path.join(screenshot_dir, f"screenshot_{timestamp}.jpg")
-                            
-                            # Save snapshot
-                            cv2.imwrite(snapshot_path, img)
-                            app.logger.info(f"Snapshot saved: {snapshot_path}")
 
-                            # Record 5-second video
-                            video_path = os.path.join(video_dir, f"video_{timestamp}.mp4")
-                            video_writer = cv2.VideoWriter(
-                                video_path, cv2.VideoWriter_fourcc(*'mp4v'),
-                                20, (img.shape[1], img.shape[0])
-                            )
-                            start_time = time.time()
-                            while time.time() - start_time < 5:
-                                success, frame = cap.read()
-                                if success:
-                                    video_writer.write(frame)
-                                else:
-                                    break
-                            video_writer.release()
-                            app.logger.info(f"Video saved: {video_path}")
-
-                            # Save to database
-                            insert_incident(snapshot_path, "Unknown", video_path, alert)
-
-                            # Send SMS alert
-                            alert_message = "Helmet Alert: A person without Helmet detected. 'No-helmet' class detected!"
-                            send_sms(alert_message)
-
-                            last_alert_time = current_time
-                            
-                    elif classNames[cls] == 'phone':
-                        alert = 'Phone detected'
-                        current_time = time.time()
-                        if current_time - last_alert_time >= 30:
-                            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-                            snapshot_path = os.path.join(screenshot_dir, f"screenshot_{timestamp}.jpg")
-                            
-                            # Save snapshot
-                            cv2.imwrite(snapshot_path, img)
-                            app.logger.info(f"Snapshot saved: {snapshot_path}")
-
-                            # Record 5-second video
-                            video_path = os.path.join(video_dir, f"video_{timestamp}.mp4")
-                            video_writer = cv2.VideoWriter(
-                                video_path, cv2.VideoWriter_fourcc(*'mp4v'),
-                                20, (img.shape[1], img.shape[0])
-                            )
-                            start_time = time.time()
-                            while time.time() - start_time < 5:
-                                success, frame = cap.read()
-                                if success:
-                                    video_writer.write(frame)
-                                else:
-                                    break
-                            video_writer.release()
-                            app.logger.info(f"Video saved: {video_path}")
-
-                            # Save to database
-                            insert_incident(snapshot_path, "Unknown", video_path, alert)
-
-                            # Send SMS alert
-                            alert_message = "Phone Alert: A person with Phone detected. 'Phone' class detected!"
-                            send_sms(alert_message)
-
-                            last_alert_time = current_time
-                                
             ret, buffer = cv2.imencode('.jpg', img)
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
@@ -290,102 +200,8 @@ def index():
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
-
-
-
-# def get_files_from_static_subfolders(base_folder="static"):
-#     """
-#     Retrieve files from 'screenshots' and 'videos' subfolders with their metadata.
-
-#     Args:
-#         base_folder (str): Path to the static folder containing subfolders.
-
-#     Returns:
-#         list: A list of dictionaries containing file metadata.
-#     """
-#     subfolders = {
-#         "screenshots": "img",  # Files in 'screenshots' are images
-#         "videos": "vid"        # Files in 'videos' are videos
-#     }
-#     files = []
-
-#     for subfolder, file_type in subfolders.items():
-#         folder_path = os.path.join(base_folder, subfolder)
-#         if not os.path.exists(folder_path):
-#             continue  # Skip if the subfolder doesn't exist
-
-#         for filename in os.listdir(folder_path):
-#             file_path = os.path.join(folder_path, filename)
-#             if os.path.isfile(file_path):  # Ensure it's a file, not a directory
-#                 file_info = {
-#                     "name": filename,
-#                     "type": file_type,
-#                     "last_modified": datetime.fromtimestamp(os.path.getmtime(file_path)).strftime('%b %d, %Y'),
-#                     "size": f"{os.path.getsize(file_path) / 1024:.2f} KB",  # File size in KB
-#                     "download_url": url_for("download_file", folder=subfolder, filename=filename),
-#                 }
-#                 files.append(file_info)
-#     return files
-
-# @app.route("/")
-# def video_storage():
-#     files = get_files_from_static_subfolders("static")  # Specify the base folder
-#     return render_template("video-record.html", files=files)
-
-# @app.route("/download/<folder>/<filename>")
-# def download_file(folder, filename):
-#     folder_path = os.path.join("static", folder)
-#     return send_from_directory(folder_path, filename, as_attachment=True)
-
-# def get_incident_videos():
-#     # Connect to the SQLite database
-#     conn = sqlite3.connect('incidents.db')  # Update with the actual path to your database
-#     cursor = conn.cursor()
-    
-#     # Fetch video URLs and gender from the `incidents` table
-#     query2 = "SELECT video, gender FROM incidents"
-#     cursor.execute(query2)
-#     data = cursor.fetchall()
-#     conn.close()
-    
-#     # Format the data as a list of dictionaries
-#     return [{'video': row[0], 'gender': row[1]} for row in data]
-
-# @app.route('/videos')
-# def display_videos():
-#     files = get_incident_videos()
-#     return render_template('video-record.html', files=files)
-
-@app.route('/video-records')
-def video_records():
-    try:
-        connection = sqlite3.connect("incidents.db")
-        cursor = connection.cursor()
-        cursor.execute("SELECT id, gender, video FROM incidents")
-        records = cursor.fetchall()
-        connection.close()
-
-        videos = []
-        for record in records:
-            video_id, gender, video_data = record
-            # Assuming video is stored as binary data, create a link to the video
-            # video_url = url_for('static', filename=f'videos/video_{video_id}.mp4')
-            # videos.append({
-            #     'gender': gender,
-            #     'video_url': video_url
-            # })
-
-        return render_template('video-record.html', videos=videos)
-
-    except Exception as e:
-        app.logger.error(f"Error fetching video records: {e}")
-        return render_template('video-record.html', videos=[])
-
-
-
 if __name__ == "__main__":
     # Configure logging
-    # logging.basicConfig(filename='app.log', level=logging.INFO)
+    logging.basicConfig(filename='app.log', level=logging.INFO)
 
-    app.run(debug=True)
+    app.run(debug=DEBUG)
