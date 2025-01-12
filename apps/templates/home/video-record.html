@@ -1,114 +1,99 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} Recordings {% endblock title %}
+{% block title %} Video Storage System {% endblock title %}
 
-<!-- Specific CSS goes HERE -->
 {% block stylesheets %}
-
+<style>
+  .table-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #1e1e2f;
+    border-radius: 8px;
+    color: #ffffff;
+  }
+  .table-container h1 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ffffff;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+  }
+  th {
+    background-color: #27293d;
+    color: #ffffff;
+  }
+  td {
+    color: #c3c3c3;
+  }
+  .action-buttons button {
+    padding: 8px 12px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .action-buttons .download-btn {
+    background-color: #4caf50;
+    color: #ffffff;
+  }
+</style>
 {% endblock stylesheets %}
 
 {% block content %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <title>Incident Records</title> -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-</head>
-
-<div class="container mt-5">
-    <h2>Video Recordings</h2>   
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Sr. No</th>
-                <th>ID</th>
-                <th>Video Name</th>
-                <th>Video Link</th>
-                <th>Timestamp</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody id="incidentTableBody">
-            <!-- Records will be dynamically inserted here -->
-        </tbody>
-    </table>
+<div class="table-container">
+  <h1>Video Storage System</h1>
+  <table id="files-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>File Type</th>
+        <th>Last Modified</th>
+        <th>File Size</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dynamic rows will be inserted here -->
+    </tbody>
+  </table>
 </div>
-
-
-
 {% include "includes/footer.html" %}
 {% endblock content %}
 
-<!-- Specific JS goes HERE -->
 {% block javascripts %}
-
 <script>
-    // Function to fetch incident records
-    async function fetchIncidentRecords() {
-        try {
-            const response = await fetch('/get_incident_records');
-            const data = await response.json();
+  // Fetch files from the backend and populate the table
+  fetch('/files')
+    .then(response => response.json())
+    .then(files => {
+      const tableBody = document.querySelector("#files-table tbody");
+      tableBody.innerHTML = ""; // Clear existing rows
 
-            if (data.status === 'success') {
-                return data.data; // Return the records
-            } else {
-                console.error('Error fetching records:', data.message);
-                return [];
-            }
-        } catch (error) {
-            console.error('Fetch error:', error);
-            return [];
-        }
-    }
-
-    // Function to fetch video records
-    async function fetchVideoRecords() {
-        try {
-            const response = await fetch('/get_videos');
-            const data = await response.json();
-            return data; // Assuming data is an array of video records
-        } catch (error) {
-            console.error('Error fetching videos:', error);
-            return [];
-        }
-    }
-
-    // Populate the table with combined data
-    // Populate the table with combined data
-async function populateTable() {
-    const incidentRecords = await fetchIncidentRecords();
-    const videoRecords = await fetchVideoRecords();
-
-    const tableBody = document.getElementById('incidentTableBody');
-    tableBody.innerHTML = ''; // Clear existing content
-
-    // Loop through both incident and video records
-    incidentRecords.forEach((record, index) => {
-        const videoRecord = videoRecords[index]; // Assuming one-to-one mapping by index
-
-        const row = `
-            <tr>
-                <td>${index + 1}</td> <!-- Serial Number Column -->
-                <td>${record.id || 'N/A'}</td>
-                <td>${videoRecord?.name || 'N/A'}</td>
-                <td>
-                    ${
-                        videoRecord?.path
-                            ? `<a href="${videoRecord.path}" target="_blank">Watch Video</a>`
-                            : 'N/A'
-                    }
-                </td>
-                <td>${record.timestamp || 'N/A'}</td>
-                <td>${record.date || 'N/A'}</td>
-            </tr>
+      files.forEach(file => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${file.name}</td>
+          <td>${file.type}</td>
+          <td>${new Date(file.last_modified * 1000).toLocaleString()}</td>
+          <td>${(file.size / 1024).toFixed(2)} KB</td>
+          <td class="action-buttons">
+            <a href="${file.download_url}" download>
+              <button class="download-btn">Download</button>
+            </a>
+          </td>
         `;
-        tableBody.innerHTML += row;
-    });
-}
-
-
-    // Initialize table on page load
-    document.addEventListener('DOMContentLoaded', populateTable);
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(error => console.error("Error fetching files:", error));
 </script>
-
 {% endblock javascripts %}

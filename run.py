@@ -341,30 +341,68 @@ def get_incident_records():
         app.logger.error(f"Error fetching incident records: {e}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
     
-# Get the absolute path to the static/videos folder
-videos_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static', 'videos')
 
-# Route to fetch videos from the static/videos folder
-@app.route('/get_videos', methods=['GET'])
-def get_videos():
+
+
+
+
+
+# Base directory for static files
+STATIC_DIR = os.path.join(os.getcwd(),"static")
+
+@app.route("/")
+def video_storage():
+    """Render the main UI with the table."""
+    return render_template("video-record.html")
+
+@app.route("/files")
+def get_files():
+    """Retrieve files dynamically from static folders."""
+    screenshots_dir = os.path.join(STATIC_DIR, "screenshots")
+    videos_dir = os.path.join(STATIC_DIR, "videos")
+
+    files = []
+
+    # Process screenshots (images)
+    if os.path.exists(screenshots_dir):
+        for filename in os.listdir(screenshots_dir):
+            file_path = os.path.join(screenshots_dir, filename)
+            if os.path.isfile(file_path):
+                files.append({
+                    "name": filename,
+                    "type": "img",
+                    "last_modified": os.path.getmtime(file_path),
+                    "size": os.path.getsize(file_path),
+                    "download_url": f"/download/screenshots/{filename}"
+                })
+
+    # Process videos
+    if os.path.exists(videos_dir):
+        for filename in os.listdir(videos_dir):
+            file_path = os.path.join(videos_dir, filename)
+            if os.path.isfile(file_path):
+                files.append({
+                    "name": filename,
+                    "type": "vid",
+                    "last_modified": os.path.getmtime(file_path),
+                    "size": os.path.getsize(file_path),
+                    "download_url": f"/download/videos/{filename}"
+                })
+
+    # Return file data as JSON
+    return jsonify(files)
+
+@app.route("/download/<folder>/<filename>")
+def download_file(folder, filename):
+    """Download a file from the specified folder."""
+    folder_path = os.path.join(STATIC_DIR, folder)
     try:
-        if not os.path.exists(videos_dir):
-            raise FileNotFoundError(f"Videos directory does not exist: {videos_dir}")
-
-        video_files = [
-            {"name": video, "path": f"/static/videos/{video}"}
-            for video in os.listdir(videos_dir)
-            if video.endswith(('.mp4', '.avi', '.mkv', '.mov'))  # Add other formats if needed
-        ]
-        return jsonify(video_files)
+         if os.path.isfile(os.path.join(folder_path, filename)):
+             return send_from_directory(folder_path, filename, as_attachment=True)
+         else:
+             return jsonify({"error": "File not found"}), 404
     except Exception as e:
-        app.logger.error(f"Error fetching video files: {e}")
-        return jsonify({"error": "Unable to fetch video files"}), 500
-
-# Route to serve individual video files (optional)
-@app.route('/static/videos/<path:filename>')
-def serve_video(filename):
-    return send_from_directory(videos_dir, filename)
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     # Configure logging
