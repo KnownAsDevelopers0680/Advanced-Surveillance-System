@@ -66,6 +66,7 @@ def init_db():
             geolocation TEXT NOT NULL, 
             timestamp TEXT NOT NULL, 
             date TEXT NOT NULL, 
+            alert TEXT NOT NULL,
             video BLOB 
         );
         """
