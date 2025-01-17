@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveillance System - Camera</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Surveillance System</h1>
+
+        <!-- Camera Stream -->
+        <div id="camera-container">
+            <video id="video" width="640" height="480" autoplay></video>
+        </div>
+
+        <button id="startCamera" onclick="startCamera()">Start Camera</button>
+        <button id="stopCamera" onclick="stopCamera()">Stop Camera</button>
+
+        <p>Status: <span id="cameraStatus">Not Active</span></p>
+    </div>
+
+    <script>
+        let videoStream; // Global variable to store the video stream
+
+        // Function to start the camera
+        async function startCamera() {
+            try {
+                const videoElement = document.getElementById("video");
+                const constraints = { video: true };
+
+                // Get user media (camera stream)
+                videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+                // Set video source to the stream
+                videoElement.srcObject = videoStream;
+
+                // Change status to active
+                document.getElementById("cameraStatus").innerText = "Active";
+
+                // Update localStorage to remember the camera is active
+                localStorage.setItem('cameraActive', 'true');
+            } catch (error) {
+                console.error("Error accessing the camera:", error);
+                alert("Failed to start the camera.");
+            }
+        }
+
+        // Function to stop the camera
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+                document.getElementById("cameraStatus").innerText = "Not Active";
+
+                // Update localStorage to remember the camera is stopped
+                localStorage.setItem('cameraActive', 'false');
+            } else {
+                alert("Camera is not active.");
+            }
+        }
+
+        // Check if camera was active in the previous session and start it
+        window.onload = function() {
+            const cameraActive = localStorage.getItem('cameraActive');
+            if (cameraActive === 'true') {
+                startCamera();
+            }
+        }
+
+        // Optional: Automatically stop camera when user navigates away
+        window.onbeforeunload = function() {
+            stopCamera();
+        }
+    </script>
+</body>
+</html>
