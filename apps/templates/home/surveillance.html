@@ -55,7 +55,9 @@
                   </div>
                 </div>
               <!-- Button to open the camera -->
-              <button onclick="startDetection()" class="btn btn-primary">Start Detection</button>
+              <button onclick="startDetection()" class="btn btn-primary">Start Camera</button>
+              <!-- Button to stop the camera -->
+              <button onclick="stopCamera()" class="btn btn-danger">Stop Camera</button>
                   <!-- <button id="openCamera" class="btn btn-primary">Connect Camera</button> -->
               </div>
             </div>
@@ -79,7 +81,7 @@
                         <!-- <h1 class="text-center">Real-Time Helmet Detection</h1> -->
                         <div class="video-container">
                             <!-- Stream the video -->
-                            <img src="/video_feed" alt="Live Footage">
+                            <img id="liveFootage" src="/video_feed" alt="Live Footage">
                         </div>
                        
                     </div>
@@ -235,36 +237,70 @@
       </script> -->
   
       <script>
-        async function startCamera() {
-        const video = document.querySelector("video"); // Select the video element
-        const constraints = { video: true }; // Video stream constraints
-  
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia(constraints); // Access the camera
-            video.srcObject = stream; // Stream the video to the video element
-            video.style.opacity = "1"; // Make the video visible
-            alert("Camera started successfully!"); // Notify the user
-        } catch (error) {
-            console.error("Error accessing the camera:", error);
-            alert("Failed to start the camera. Please check your device permissions.");
+        let videoStream; // Global variable to store the video stream
+
+async function startCamera() {
+    const img = document.querySelector("#liveFootage"); // Select the img element
+    const constraints = { video: true }; // Video stream constraints
+
+    try {
+        videoStream = await navigator.mediaDevices.getUserMedia(constraints); // Access the camera
+
+        // Use a canvas to capture frames from the video stream and update the img element
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        const videoTrack = videoStream.getVideoTracks()[0];
+        const videoTrackSettings = videoTrack.getSettings();
+        canvas.width = videoTrackSettings.width;
+        canvas.height = videoTrackSettings.height;
+
+        function updateImage() {
+            context.drawImage(videoStream, 0, 0, canvas.width, canvas.height); // Draw the current frame onto the canvas
+            img.src = canvas.toDataURL('image/jpeg'); // Set the img source to the canvas frame as a data URL
         }
+
+        // Start periodically updating the image
+        setInterval(updateImage, 1000); // Update every second
+
+        img.style.opacity = "1"; // Make the image visible
+        alert("Camera started successfully!"); // Notify the user
+    } catch (error) {
+        console.error("Error accessing the camera:", error);
+        alert("Failed to start the camera. Please check your device permissions.");
     }
-  
-        function startDetection() {
-            alert("Detection started! Ensure the camera is connected.");
-            // Optionally trigger further actions if needed
-            startCamera();
-        }
-  
-        function updateTimestamp() {
-        const timestampElement = document.getElementById("currentTimestamp");
-        const now = new Date(); // Get the current date and time
-        const formattedTimestamp = now.toLocaleString(); // Format it as per local settings
-        timestampElement.textContent = formattedTimestamp; // Set the timestamp in the span
-    }
-  
-    // Update the timestamp every second
-    setInterval(updateTimestamp, 1000);
+}
+
+// function stopCamera() {
+//     if (videoStream && videoStream.getTracks) {
+//         // Stop all tracks in the video stream
+//         videoStream.getTracks().forEach((track) => track.stop());
+//         videoStream = null; // Clear the videoStream reference after stopping the tracks
+
+//         alert("Camera stopped successfully!"); // Notify the user
+        
+//         const img = document.querySelector("img");
+//         img.src = ""; // Set the img source to an empty string, making it blank
+//         img.style.opacity = "0"; // Hide the img (make it invisible)
+//     } else {
+//         alert("Camera is not running.");
+//     }
+// }
+
+function startDetection() {
+    alert("Detection started! Ensure the camera is connected.");
+    startCamera(); // Start the camera
+}
+
+function updateTimestamp() {
+    const timestampElement = document.getElementById("currentTimestamp");
+    const now = new Date(); // Get the current date and time
+    const formattedTimestamp = now.toLocaleString(); // Format it as per local settings
+    timestampElement.textContent = formattedTimestamp; // Set the timestamp in the span
+}
+
+// Update the timestamp every second
+setInterval(updateTimestamp, 1000);
+
 
     
     // const snapshotContainer = document.getElementById('snapshot-container');

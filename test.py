@@ -7,7 +7,7 @@ def delete_records():
         cursor = connection.cursor()
 
         # Delete records with id 4 and 5
-        delete_query = "DELETE FROM incidents WHERE id IN (6, 7);"
+        delete_query = "DELETE FROM incidents WHERE id IN (13, 14,15,16);"
         cursor.execute(delete_query)
 
         # Commit the changes
